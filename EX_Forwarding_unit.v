@@ -1,6 +1,5 @@
 `timescale 1ns / 1ps
 
-
 module EX_Forwarding_unit(
     input ex_mem_reg_write,
     input [4:0] ex_mem_write_reg_addr,
@@ -11,10 +10,25 @@ module EX_Forwarding_unit(
     output reg [1:0] Forward_A,
     output reg [1:0] Forward_B
     );
-    
-    always @(*)  
+
+    always @(*)
     begin
-	// Write your code here that calculates the values of Forward_A and Forward_B
-    end 
+
+      Forward_A = 2'b00;
+      Forward_B = 2'b00;
+
+      // Foward_A
+      if((ex_mem_reg_write != 0 && ex_mem_write_reg_addr != 0) &&
+        (ex_mem_write_reg_addr == id_ex_instr_rs)) Forward_A = 2'b10;
+      else if ((mem_wb_reg_write != 0 && mem_wb_write_reg_addr != 0) &&
+        (mem_wb_write_reg_addr == id_ex_instr_rs)) Forward_A = 2'b01;
+
+      // Forward_B
+      if ((ex_mem_reg_write != 0 && ex_mem_write_reg_add != 0) &&
+        (ex_mem_write_reg_addr == id_ex_instr_rt)) Forward_B = 2'b10;
+      else if ((mem_wb_reg_write != 0 && mem_wb_write_reg_addr != 0) &&
+        (mem_wb_write_reg_addr == id_ex_instr_rt)) Forward_B = 2'b01;
+
+    end
 
 endmodule

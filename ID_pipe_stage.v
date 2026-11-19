@@ -45,7 +45,6 @@ module ID_pipe_stage (
   assign branch_address = pc_plus4 + (imm_value << 2);
 
   assign opcode = instr[31:26];
-
   control control_module (
       .reset(reset),
       .opcode(opcode),

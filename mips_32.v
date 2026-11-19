@@ -16,6 +16,7 @@ module mips_32 (
   wire id_ex_alu_src, id_ex_reg_write;
   wire ex_mem_mem_to_reg, ex_mem_mem_read, ex_mem_mem_write, ex_mem_reg_write;
 
+
   wire [1:0] alu_op, id_ex_alu_op;
   wire [1:0] Forward_A, Forward_B;
   wire [9:0] branch_address, jump_address;
@@ -27,6 +28,7 @@ module mips_32 (
   wire [31:0] alu_result, alu_in2_out, ex_mem_alu_result, ex_mem_alu_in2_out;
   wire [4:0] destination_reg, id_ex_destination_reg, ex_mem_destination_reg;
   wire [4:0] mem_wb_write_reg_addr, mem_wb_destination_reg;
+  wire [4:0] ex_mem_write_reg_addr;
   wire [6:0] ID_EX_control_signals, ID_EX_control_outputs;
   wire [3:0] EX_MEM_control_signals, EX_MEM_control_outputs;
 
@@ -197,6 +199,16 @@ module mips_32 (
   ///////////////////////////// Forwarding unit
   // Complete your code here
 
+  EX_Forwarding_unit EX_Fowarding_unit (
+    .ex_mem_reg_write(ex_mem_reg_write),
+    .ex_mem_write_reg_addr(ex_mem_destination_reg),
+    .id_ex_instr_rs(id_ex_instr[25:21]),
+    .id_ex_instr_rt(id_ex_instr[20:16]),
+    .mem_wb_reg_write(mem_ex_reg_write),
+    .mem_wb_write_reg_addr(mem_wb_destination_reg),
+    .Forward_A(Forward_A),
+    .Forward_B(Forward_B)
+  );
 
   ///////////////////////////// EX/MEM registers
   // Complete your code here

@@ -20,7 +20,6 @@ module EX_pipe_stage (
   wire [3:0] alu_control;
   wire [31:0] alu_mux_output, Forward_A_mux_output, Forward_B_mux_output;
 
-
   assign alu_in2_out = Forward_B_mux_output;
 
   ALUControl EX_alu_ctrl (
@@ -29,7 +28,7 @@ module EX_pipe_stage (
       .ALU_Control(alu_control)
   );
 
-  ALU Ex_ALU (
+  ALU EX_ALU (
       .a(Forward_A_mux_output),
       .b(alu_mux_output),
       .alu_control(alu_control),
@@ -58,7 +57,6 @@ module EX_pipe_stage (
       .sel(Forward_B),
       .y  (Forward_B_mux_output)
   );
-
 
   mux2 #(
       .mux_width(32)
