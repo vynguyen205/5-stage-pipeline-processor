@@ -17,7 +17,7 @@ module mips_32 (
   wire ex_mem_mem_to_reg, ex_mem_mem_read, ex_mem_mem_write, ex_mem_reg_write;
 
   wire [1:0] alu_op, id_ex_alu_op;
-  wire [1:0] Forward_A, Foward_B;
+  wire [1:0] Forward_A, Forward_B;
   wire [9:0] branch_address, jump_address;
   wire [9:0] pc, pc_plus4, if_id_pc_plus4;
   wire [31:0] write_back_data, mem_wb_write_back_data;
@@ -148,8 +148,6 @@ module mips_32 (
       .q(id_ex_destination_reg)
   );
 
-
-
   assign ID_EX_control_signals = {mem_to_reg, alu_op, mem_read, mem_write, alu_src, reg_write};
   assign {
     id_ex_mem_to_reg,
@@ -170,10 +168,10 @@ module mips_32 (
 
 
   ///////////////////////////// Hazard_detection unit
-  // Complete your code here    
+  // Complete your code here
 
 
-  ///////////////////////////// Execution    
+  ///////////////////////////// Execution
   // Complete your code here
 
   EX_pipe_stage EX_stage (
@@ -185,18 +183,18 @@ module mips_32 (
       .mem_wb_write_back_result(write_back_data),
       .id_ex_alu_src(id_ex_alu_src),
       .id_ex_alu_op(id_ex_alu_op),
-      .Foward_A(Foward_A),
-      .Foward_B(Foward_B),
+      .Forward_A(Forward_A),
+      .Forward_B(Forward_B),
       .alu_in2_out(alu_in2_out),
       .alu_result(alu_result)
   );
 
   ///////////////////////////// Forwarding unit
-  // Complete your code here 
+  // Complete your code here
 
 
   ///////////////////////////// EX/MEM registers
-  // Complete your code here 
+  // Complete your code here
 
   pipe_reg #(
       .WIDTH(32)
@@ -253,15 +251,15 @@ module mips_32 (
   );
 
 
-  ///////////////////////////// memory    
+  ///////////////////////////// memory
   // Complete your code here
 
 
-  ///////////////////////////// MEM/WB registers  
+  ///////////////////////////// MEM/WB registers
   // Complete your code here
 
 
-  ///////////////////////////// writeback    
+  ///////////////////////////// writeback
   // Complete your code here
 
 
