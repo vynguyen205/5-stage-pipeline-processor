@@ -32,6 +32,11 @@ module mips_32 (
 
   // Build the pipeline as indicated in the lab manual
 
+  assign en = 1;
+  assign flush = 0;
+  assign Data_Hazard = 1;
+  assign Control_Hazard = 0;
+
   ///////////////////////////// Instruction Fetch
   // Complete your code here
   IF_pipe_stage IF_stage (

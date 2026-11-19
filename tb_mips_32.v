@@ -26,5 +26,7 @@ module tb_mips_32;
         #100;
         reset = 0;
         // Add stimulus here
+        #3000;
+        $finish;
   end
 endmodule
