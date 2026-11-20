@@ -9,12 +9,12 @@ module mips_32 (
   // define all the wires here. You need to define more wires than the ones you did in Lab2
 
   wire en, flush, branch_taken, jump;
-  wire mem_wb_reg_write;
   wire mem_to_reg, mem_read, mem_write, alu_src, reg_write;
   wire Data_Hazard, Control_Hazard;
   wire id_ex_mem_to_reg, id_ex_mem_read, id_ex_mem_write;
   wire id_ex_alu_src, id_ex_reg_write;
   wire ex_mem_mem_to_reg, ex_mem_mem_read, ex_mem_mem_write, ex_mem_reg_write;
+  wire mem_wb_mem_to_reg, mem_wb_reg_write;
 
 
   wire [1:0] alu_op, id_ex_alu_op;
@@ -26,18 +26,18 @@ module mips_32 (
   wire [31:0] imm_value, id_ex_imm_value;
   wire [31:0] reg1, reg2, id_ex_reg1, id_ex_reg2;
   wire [31:0] alu_result, alu_in2_out, ex_mem_alu_result, ex_mem_alu_in2_out;
+  wire [31:0] mem_read_data,mem_wb_mem_read_data, mem_wb_alu_result;
   wire [4:0] destination_reg, id_ex_destination_reg, ex_mem_destination_reg;
   wire [4:0] mem_wb_write_reg_addr, mem_wb_destination_reg;
   wire [4:0] ex_mem_write_reg_addr;
   wire [6:0] ID_EX_control_signals, ID_EX_control_outputs;
   wire [3:0] EX_MEM_control_signals, EX_MEM_control_outputs;
+  wire [1:0] MEM_WB_control_signals, MEM_WB_control_outputs;
 
   // Build the pipeline as indicated in the lab manual
 
-  assign en = 1;
-  assign flush = 0;
-  assign Data_Hazard = 1;
-  assign Control_Hazard = 0;
+  assign en = Data_Hazard;
+  assign Control_Hazard = 1'b0;
 
   ///////////////////////////// Instruction Fetch
   // Complete your code here
@@ -177,34 +177,44 @@ module mips_32 (
   ///////////////////////////// Hazard_detection unit
   // Complete your code here
 
+  Hazard_detection hazard_detection (
+    .id_ex_mem_read(id_ex_mem_read),
+    .id_ex_destination_reg(id_ex_destination_reg),
+    .if_id_rs(if_id_instr[25:21]),
+    .if_id_rt(if_id_instr[20:16]),
+    .branch_taken(branch_taken),
+    .jump(jump),
+    .Data_Hazard(Data_Hazard),
+    .IF_Flush(flush)
+  );
 
   ///////////////////////////// Execution
   // Complete your code here
 
   EX_pipe_stage EX_stage (
-      .id_ex_instr(id_ex_instr),
-      .reg1(id_ex_reg1),
-      .reg2(id_ex_reg2),
-      .id_ex_imm_value(id_ex_imm_value),
-      .ex_mem_alu_result(ex_mem_alu_result),
-      .mem_wb_write_back_result(write_back_data),
-      .id_ex_alu_src(id_ex_alu_src),
-      .id_ex_alu_op(id_ex_alu_op),
-      .Forward_A(Forward_A),
-      .Forward_B(Forward_B),
-      .alu_in2_out(alu_in2_out),
-      .alu_result(alu_result)
+    .id_ex_instr(id_ex_instr),
+    .reg1(id_ex_reg1),
+    .reg2(id_ex_reg2),
+    .id_ex_imm_value(id_ex_imm_value),
+    .ex_mem_alu_result(ex_mem_alu_result),
+    .mem_wb_write_back_result(write_back_data),
+    .id_ex_alu_src(id_ex_alu_src),
+    .id_ex_alu_op(id_ex_alu_op),
+    .Forward_A(Forward_A),
+    .Forward_B(Forward_B),
+    .alu_in2_out(alu_in2_out),
+    .alu_result(alu_result)
   );
 
   ///////////////////////////// Forwarding unit
   // Complete your code here
 
-  EX_Forwarding_unit EX_Fowarding_unit (
+  EX_Forwarding_unit ex_forwarding_unit (
     .ex_mem_reg_write(ex_mem_reg_write),
     .ex_mem_write_reg_addr(ex_mem_destination_reg),
     .id_ex_instr_rs(id_ex_instr[25:21]),
     .id_ex_instr_rt(id_ex_instr[20:16]),
-    .mem_wb_reg_write(mem_ex_reg_write),
+    .mem_wb_reg_write(mem_wb_reg_write),
     .mem_wb_write_reg_addr(mem_wb_destination_reg),
     .Forward_A(Forward_A),
     .Forward_B(Forward_B)
@@ -270,15 +280,66 @@ module mips_32 (
 
   ///////////////////////////// memory
   // Complete your code here
-
+  data_memory Data_Mem (
+    .clk(clk),
+    .mem_access_addr(ex_mem_alu_result),
+    .mem_write_data(ex_mem_alu_in2_out),
+    .mem_write_en(ex_mem_mem_write),
+    .mem_read_en(ex_mem_mem_read),
+    .mem_read_data(mem_read_data)
+  );
 
   ///////////////////////////// MEM/WB registers
   // Complete your code here
 
+  pipe_reg #(
+    .WIDTH(32)
+  ) MEM_WB_alu_result (
+    .clk(clk),
+    .reset(reset),
+    .d(ex_mem_alu_result),
+    .q(mem_wb_alu_result)
+  );
 
-  ///////////////////////////// writeback
+  pipe_reg #(
+    .WIDTH(32)
+  ) MEM_WB_mem_read_data(
+    .clk(clk),
+    .reset(reset),
+    .d(mem_read_data),
+    .q(mem_wb_mem_read_data)
+  );
+  
+  pipe_reg #(
+      .WIDTH(5)
+  ) MEM_WB_dest_reg (
+      .clk(clk),
+      .reset(reset),
+      .d(ex_mem_destination_reg),
+      .q(mem_wb_destination_reg)
+  );
+
+  assign MEM_WB_control_signals = {ex_mem_mem_to_reg, ex_mem_reg_write};
+  assign {mem_wb_mem_to_reg, mem_wb_reg_write} = MEM_WB_control_outputs;
+  pipe_reg #(
+      .WIDTH(2)
+  ) MEM_WB_signals (
+      .clk(clk),
+      .reset(reset),
+      .d(MEM_WB_control_signals),
+      .q(MEM_WB_control_outputs)
+  );
+
+
+    ///////////////////////////// writeback
   // Complete your code here
-
-
+  mux2 #(.mux_width(32)) WB_mux (
+    .a(mem_wb_alu_result),
+    .b(mem_wb_mem_read_data),
+    .sel(mem_wb_mem_to_reg),
+    .y(write_back_data)
+  );
+  
+  assign result = write_back_data;
 
 endmodule

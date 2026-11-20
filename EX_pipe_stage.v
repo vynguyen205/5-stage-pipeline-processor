@@ -28,7 +28,7 @@ module EX_pipe_stage (
       .ALU_Control(alu_control)
   );
 
-  ALU EX_ALU (
+  ALU EX_alu (
       .a(Forward_A_mux_output),
       .b(alu_mux_output),
       .alu_control(alu_control),
@@ -66,6 +66,5 @@ module EX_pipe_stage (
       .sel(id_ex_alu_src),
       .y  (alu_mux_output)
   );
-
 
 endmodule
