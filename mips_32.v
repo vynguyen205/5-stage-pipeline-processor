@@ -280,7 +280,7 @@ module mips_32 (
 
   ///////////////////////////// memory
   // Complete your code here
-  data_memory Data_Mem (
+  data_memory data_mem (
     .clk(clk),
     .mem_access_addr(ex_mem_alu_result),
     .mem_write_data(ex_mem_alu_in2_out),

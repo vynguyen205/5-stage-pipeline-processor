@@ -14,7 +14,7 @@ module data_memory (
   wire [7 : 0] ram_addr = mem_access_addr[9 : 2];
 
   initial begin
-    for (i = 0; i < 256; i = i + 1) ram[i] <= 32'd0;
+    for (i = 0; i < 256; i = i + 1) ram[i] <= 32'b0;
   end
   always @(posedge clk) begin
     if (mem_write_en) ram[ram_addr] <= mem_write_data;

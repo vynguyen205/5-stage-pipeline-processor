@@ -89,32 +89,32 @@ module instruction_mem(
         // // Data Hazard test                                                                                
         // // Data Hazard is the result of dependency between LW instruction's destination register and one of the next instruction's source register
         // // we need to insert a NOP. This means that pc shouldnt change for one clk cycle. check your waveform to make sure your pc doesnt change 
-        // rom[46] = 32'b10001100000010110000000000100100; // r11 = mem[36]                 9                  r11= c187a606            -
-        // rom[47] = 32'b00000001011000100110000000100000; // add r12,r11,r2             d15f1416              r12= d15f1416            -
-        // rom[48] = 32'b10001100000011010000000000100000; // r13 = mem[32]                 9                  r13= b54bc031            -
-        // rom[49] = 32'b00000000001011010111000000100000; // add r14,r1,r13             b54bc032              r14= b54bc032            -
-        // // store the result in memory                                                                      
-        // rom[50] = 32'b10101100000011000000000001110100; // sw mem[r0+29] <= r12          74                       -                  mem[29]= d15f1416
-        // rom[51] = 32'b10101100000011100000000001111000; // sw mem[r0+30] <= r14          78                       -                  mem[30]= b54bc032
+        rom[46] = 32'b10001100000010110000000000100100; // r11 = mem[36]                 9                  r11= c187a606            -
+        rom[47] = 32'b00000001011000100110000000100000; // add r12,r11,r2             d15f1416              r12= d15f1416            -
+        rom[48] = 32'b10001100000011010000000000100000; // r13 = mem[32]                 9                  r13= b54bc031            -
+        rom[49] = 32'b00000000001011010111000000100000; // add r14,r1,r13             b54bc032              r14= b54bc032            -
+        // store the result in memory                                                                      
+        rom[50] = 32'b10101100000011000000000001110100; // sw mem[r0+29] <= r12          74                       -                  mem[29]= d15f1416
+        rom[51] = 32'b10101100000011100000000001111000; // sw mem[r0+30] <= r14          78                       -                  mem[30]= b54bc032
         //
         // // Control Hazard test Branch                                                                      
-        // rom[52] = 32'b00010000010000110000000000000011; // beq r2,r3,#3                   0         branch to instruction rom[56]
-        // rom[53] = 32'b00000000001000100101000000100000; // add r10,r1,r2              0fd76e11              r10= 0fd76e11            -
-        // rom[54] = 32'b00000000001001000101000000100000; // add r10,r1,r4              14333ffd              r10= 14333ffd            -
-        // rom[55] = 32'b00000000001001010101000000100000; // add r10,r1,r5              321fedcc              r10= 321fedcc            -
-        // // store the result in memory                                                                      
-        // rom[56] = 32'b10101100000010100000000001111100; // sw mem[r0+31] <= r10          7c                       -                  mem[31]= c187a606
-        //
-        // // Control Hazard test Jump                                                                        
-        // rom[57] = 32'b00001000000000000000000001000000; // j #40                                    jump to instruction rom[64]
-        // rom[58] = 32'b00000000001000100100100000100000; // add r9,r1,r2               0fd76e11              r9= 0fd76e11             -
-        // rom[59] = 32'b00000000001001000100100000100000; // add r9,r1,r4               14333ffd              r9= 14333ffd             -
-        // rom[60] = 32'b00000000001001010100100000100000; // add r9,r1,r5               321fedcc              r9= 321fedcc             -
-        // rom[61] = 32'b00000000001001100100100000100000; // add r9,r1,r6               80000001              r9= 80000001             -
-        // rom[62] = 32'b00000000001001110100100000100000; // add r9,r1,r7               9012fd66              r9= 9012fd66             -
-        // rom[63] = 32'b00000000001010000100100000100000; // add r9,r1,r8               abc00238              r9= abc00238             -
-        // // store the result in memory                                                                      
-        // rom[64] = 32'b10101100000010010000000010000000; // sw mem[r0+32] <= r9           80                       -                  mem[32]= b54bc031
+        rom[52] = 32'b00010000010000110000000000000011; // beq r2,r3,#3                   0         branch to instruction rom[56]
+        rom[53] = 32'b00000000001000100101000000100000; // add r10,r1,r2              0fd76e11              r10= 0fd76e11            -
+        rom[54] = 32'b00000000001001000101000000100000; // add r10,r1,r4              14333ffd              r10= 14333ffd            -
+        rom[55] = 32'b00000000001001010101000000100000; // add r10,r1,r5              321fedcc              r10= 321fedcc            -
+        // store the result in memory                                                                      
+        rom[56] = 32'b10101100000010100000000001111100; // sw mem[r0+31] <= r10          7c                       -                  mem[31]= c187a606
+
+        // Control Hazard test Jump                                                                        
+        rom[57] = 32'b00001000000000000000000001000000; // j #40                                    jump to instruction rom[64]
+        rom[58] = 32'b00000000001000100100100000100000; // add r9,r1,r2               0fd76e11              r9= 0fd76e11             -
+        rom[59] = 32'b00000000001001000100100000100000; // add r9,r1,r4               14333ffd              r9= 14333ffd             -
+        rom[60] = 32'b00000000001001010100100000100000; // add r9,r1,r5               321fedcc              r9= 321fedcc             -
+        rom[61] = 32'b00000000001001100100100000100000; // add r9,r1,r6               80000001              r9= 80000001             -
+        rom[62] = 32'b00000000001001110100100000100000; // add r9,r1,r7               9012fd66              r9= 9012fd66             -
+        rom[63] = 32'b00000000001010000100100000100000; // add r9,r1,r8               abc00238              r9= abc00238             -
+        // store the result in memory                                                                      
+        rom[64] = 32'b10101100000010010000000010000000; // sw mem[r0+32] <= r9           80                       -                  mem[32]= b54bc031
         //
       end                                                                                                  
                                                                                                            
